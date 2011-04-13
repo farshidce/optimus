@@ -29,7 +29,7 @@ class Optimus:
         return open(os.path.join(site_dir, u'index.html'))
 
     @cherrypy.tools.jsonify()
-    def query_enterprise(self,deliverable_type,os_architecture,build_version):
+    def query_enterprise(self,deliverable_type,os_architecture,build_version = None):
         print deliverable_type,os_architecture,build_version
         builds,changes = BuildQuery().get_latest_builds()
         product = 'membase-server-enterprise'
@@ -42,13 +42,20 @@ class Optimus:
         sorted_by_number =  sorted(filtered,
                       key=lambda build: build.build_number,reverse=True)
         for build in sorted_by_number:
+            if build.url.find('git describe') != -1:
+                continue
             if build.deliverable_type == deliverable_type\
-               and build.architecture_type == os_architecture\
-                    and build.product_version == build_version:
-                answer_build = build
-                break
+               and build.architecture_type == os_architecture:
+                if build_version:
+                    if build.product_version == build_version:
+                        answer_build = build
+                        break
+                else:
+                    answer_build = build
+                    break
 
         if answer_build:
+            print answer_build.json()
             return [answer_build.json()]
         return []
 
