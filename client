@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+
+import urllib2
+import json
+import sys
+
+def create_version_properties(type,arch):
+    page = urllib2.urlopen('http://127.0.0.1:8080/query_enterprise?deliverable_type={0}&os_architecture={1}'.format(type,arch))
+    arr = json.loads(page.read())
+    if arr:
+        dict = arr[0]
+        properties = open('version.properties', 'w')
+        line1 = 'url={0}'.format(dict['url'])
+        line2 = 'version_number={0}'.format(dict['product_version'])
+        properties.writelines([line1,'\n',line2])
+        properties.close()
+    page.close()
+
+
+if __name__ == "__main__":
+    print sys.argv
+    type = sys.argv[1]
+    arch = sys.argv[2]
+
+    create_version_properties(type,arch)
