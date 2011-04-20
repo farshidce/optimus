@@ -211,7 +211,10 @@ class BuildQuery(object):
         if first_dash != -1:
             second_dash = build.product_version.find('-', first_dash + 1)
             if second_dash != -1:
-                return int(build.product_version[first_dash + 1:second_dash])
+                try:
+                    return int(build.product_version[first_dash + 1:second_dash])
+                except :
+                    return -1
         return -1
 
     def _product_version(self,build_id):
