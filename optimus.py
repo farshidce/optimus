@@ -40,7 +40,7 @@ class Optimus:
 
         answer_build = None
         sorted_by_number =  sorted(filtered,
-                      key=lambda build: build.build_number,reverse=True)
+                      key=lambda build: build.time,reverse=True)
         for build in sorted_by_number:
             if build.url.find('git describe') != -1:
                 continue
