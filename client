@@ -4,8 +4,11 @@ import urllib2
 import json
 import sys
 
-def create_version_properties(optimus,type,arch):
-    page = urllib2.urlopen('http://{0}:9090/query_enterprise?deliverable_type={1}&os_architecture={2}'.format(optimus,type,arch))
+def create_version_properties(optimus,type,arch,product=None):
+    if product:
+        page = urllib2.urlopen('http://{0}:9090/query_enterprise?deliverable_type={1}&os_architecture={2}&product={3}'.format(optimus,type,arch,product))
+    else:
+        page = urllib2.urlopen('http://{0}:9090/query_enterprise?deliverable_type={1}&os_architecture={2}'.format(optimus,type,arch))
     arr = json.loads(page.read())
     if arr:
         dict = arr[0]
@@ -22,5 +25,8 @@ if __name__ == "__main__":
     optimus = sys.argv[1]
     type = sys.argv[2]
     arch = sys.argv[3]
-
-    create_version_properties(optimus,type,arch)
+    if len(sys.argv) == 5:
+       product = sys.argv[4]
+       create_version_properties(optimus,type,arch,product)
+    else:
+       create_version_properties(optimus,type,arch)
