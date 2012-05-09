@@ -29,7 +29,7 @@ class Optimus:
         return open(os.path.join(site_dir, u'index.html'))
 
     @cherrypy.tools.jsonify()
-    def query_enterprise(self,deliverable_type,os_architecture,build_version = None,product="membase-server-enterprise"):
+    def query_enterprise(self,deliverable_type,os_architecture,build_version = None,product="membase-server-enterprise",base_version="2.0.0"):
         print deliverable_type,os_architecture,build_version
         builds,changes = BuildQuery().get_latest_builds()
         filtered = []
@@ -45,11 +45,11 @@ class Optimus:
                 continue
             if build.deliverable_type == deliverable_type\
                and build.architecture_type == os_architecture:
-                if build_version:
+                if build_version and build_version.find(base_version) >= 0:
                     if build.product_version == build_version:
                         answer_build = build
                         break
-                else:
+                elif build.product_version.find(base_version) >= 0:
                     answer_build = build
                     break
 
